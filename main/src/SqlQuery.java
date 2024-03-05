@@ -15,27 +15,27 @@ public enum SqlQuery {
     DELETE_PATIENT("DELETE FROM patients WHERE patient_id = ?"),
 
     GET_GENERAL_PRACTITIONERS_WITH_PATIENT_OLDER_THAN_AGE(
-            "SELECT * FROM general_practitioners WHERE general_practitioner_id IN "
-            + "(SELECT general_practitioner_id FROM patients WHERE age > ?)"
+            "SELECT * FROM general_practitioners gp "
+            + "WHERE EXISTS(SELECT 1 FROM patients p WHERE gp.general_practitioner_id = p.general_practitioner_id AND p.age > ?)"
     ),
     GET_PATIENTS_WITHOUT_GENERAL_PRACTITIONER_IN_PATIENT_CITY(
             "SELECT * FROM patients p "
-            + "WHERE general_practitioner_id IS NULL OR general_practitioner_id IS NOT NULL AND p.city <> "
-            + "(SELECT city FROM general_practitioners gp WHERE gp.general_practitioner_id = p.general_practitioner_id)"
+            + "WHERE NOT EXISTS(SELECT 1 FROM general_practitioners gp WHERE gp.general_practitioner_id = p.general_practitioner_id) "
+            + "AND p.city = ?"
     ),
     GET_GENERAL_PRACTITIONER_WITH_PATIENTS_SPECIFIED_CONDITIONS(
             "SELECT * FROM general_practitioners gp "
-            + "WHERE general_practitioner_id IN (SELECT general_practitioner_id FROM patients WHERE condition IN (?))"
+            + "WHERE gp.general_practitioner_id = ANY(SELECT general_practitioner_id FROM patients WHERE condition = ?)"
     ),
     GET_PATIENT_WITH_HIGHEST_NUMBER_OF_PATIENTS(
-            "SELECT * FROM patients "
-            + "WHERE general_practitioner_id = (SELECT general_practitioner_id FROM patients "
+            "SELECT * FROM patients p "
+            + "WHERE p.general_practitioner_id = ANY(SELECT general_practitioner_id FROM patients "
             + "GROUP BY general_practitioner_id ORDER BY COUNT(*) DESC LIMIT 1)"
     ),
     GET_GENERAL_PRACTITIONER_WITH_MORE_PATIENTS_THAN_AVERAGE(
-            "SELECT * FROM general_practitioners "
-            + "WHERE general_practitioner_id IN (SELECT general_practitioner_id FROM patients "
-            + "GROUP BY general_practitioner_id HAVING COUNT(*) > (SELECT AVG(COUNT(*)) FROM patients GROUP BY general_practitioner_id))"
+            "SELECT * FROM general_practitioners gp "
+            + "WHERE gp.general_practitioner_id = ANY(SELECT general_practitioner_id FROM patients "
+            + "GROUP BY general_practitioner_id HAVING COUNT(*) > ALL(SELECT AVG(COUNT(*)) FROM patients GROUP BY general_practitioner_id))"
     );
 
     public final String query;
