@@ -27,7 +27,7 @@ public enum SqlQuery {
             "SELECT * FROM general_practitioners gp "
             + "WHERE gp.general_practitioner_id = ANY(SELECT general_practitioner_id FROM patients WHERE condition = ?)"
     ),
-    GET_PATIENT_WITH_HIGHEST_NUMBER_OF_PATIENTS(
+    GET_PATIENT_WITH_GENERAL_PRACTITIONER_WITH_HIGHEST_NUMBER_OF_PATIENTS(
             "SELECT * FROM patients p "
             + "WHERE p.general_practitioner_id = ANY(SELECT general_practitioner_id FROM patients "
             + "GROUP BY general_practitioner_id ORDER BY COUNT(*) DESC LIMIT 1)"
