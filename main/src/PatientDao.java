@@ -10,7 +10,7 @@ public interface PatientDao {
     Patient addPatient(Patient patient);
     boolean updatePatient(Patient patient);
     boolean deletePatient(int patientId);
-    List<Patient> getPatientsWithoutGeneralPractitionerInPatientCity(String city);
+    List<Patient> getPatientsWithoutGeneralPractitionerInPatientCity();
     List<Patient> getPatientWithGeneralPractitionerWithHighestNumberOfPatients();
 
 }

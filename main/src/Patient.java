@@ -86,17 +86,13 @@ public class Patient {
     }
 
     // toString method
-
     @Override
     public String toString() {
-        return "Patient{" +
-                "patient_id=" + patient_id +
-                ", patient_name='" + patient_name + '\'' +
-                ", patient_age=" + patient_age +
-                ", patient_city='" + patient_city + '\'' +
-                ", patient_condition='" + patient_condition + '\'' +
-                ", general_practitioner_id=" + general_practitioner_id +
-                '}';
+        return String.format(
+                "Patient { ID: %d, Name: '%s', Age: %d, City: '%s', Condition: '%s', Practitioner ID: %d }",
+                patient_id, patient_name, patient_age, patient_city, patient_condition, general_practitioner_id
+        );
     }
+
 
 }

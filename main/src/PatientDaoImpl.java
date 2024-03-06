@@ -164,13 +164,13 @@ public class PatientDaoImpl implements PatientDao{
     }
 
     @Override
-    public List<Patient> getPatientsWithoutGeneralPractitionerInPatientCity(String city) {
+    public List<Patient> getPatientsWithoutGeneralPractitionerInPatientCity() {
         List<Patient> patients = new ArrayList<>();
         try(
             Connection connection = ConnectionFactory.createConnection();
             PreparedStatement ps = connection.prepareStatement(SqlQuery.GET_PATIENTS_WITHOUT_GENERAL_PRACTITIONER_IN_PATIENT_CITY.query);
                 ){
-            ps.setString(1, city);
+
             ResultSet rs = ps.executeQuery();
             while(rs.next()){
                 Patient patient = new Patient();

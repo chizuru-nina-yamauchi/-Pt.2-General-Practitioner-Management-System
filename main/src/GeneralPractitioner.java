@@ -64,12 +64,10 @@ public class GeneralPractitioner {
 
     @Override
     public String toString() {
-        return "GeneralPractitioner{" +
-                "general_practitioner_id=" + general_practitioner_id +
-                ", general_practitioner_name='" + general_practitioner_name + '\'' +
-                ", general_practitioner_age=" + general_practitioner_age +
-                ", general_practitioner_city='" + general_practitioner_city + '\'' +
-                '}';
+        return String.format(
+                "GeneralPractitioner { ID: %d, Name: '%s', Age: %d, City: '%s' }",
+                general_practitioner_id, general_practitioner_name, general_practitioner_age, general_practitioner_city
+        );
     }
 
 }

@@ -20,8 +20,8 @@ public enum SqlQuery {
     ),
     GET_PATIENTS_WITHOUT_GENERAL_PRACTITIONER_IN_PATIENT_CITY(
             "SELECT * FROM patients p "
-            + "WHERE NOT EXISTS(SELECT 1 FROM general_practitioners gp WHERE gp.general_practitioner_id = p.general_practitioner_id) "
-            + "AND p.city = ?"
+            + "WHERE NOT EXISTS(SELECT 1 FROM general_practitioners gp "
+            + "WHERE gp.general_practitioner_id = p.general_practitioner_id AND p.city = gp.city)"
     ),
     GET_GENERAL_PRACTITIONER_WITH_PATIENTS_SPECIFIED_CONDITIONS(
             "SELECT * FROM general_practitioners gp "
@@ -32,11 +32,27 @@ public enum SqlQuery {
             + "WHERE p.general_practitioner_id = ANY(SELECT general_practitioner_id FROM patients "
             + "GROUP BY general_practitioner_id ORDER BY COUNT(*) DESC LIMIT 1)"
     ),
+
+    /*
+    *
+    *  Using Common Table Expressions (CTE) to get general practitioners with more patients than average
+    *  Calculate the average number of patients per general practitioner
+    *  And then compare the number of patients per general practitioner with the average
+    * */
     GET_GENERAL_PRACTITIONER_WITH_MORE_PATIENTS_THAN_AVERAGE(
-            "SELECT * FROM general_practitioners gp "
-            + "WHERE gp.general_practitioner_id = ANY(SELECT general_practitioner_id FROM patients "
-            + "GROUP BY general_practitioner_id HAVING COUNT(*) > ALL(SELECT AVG(COUNT(*)) FROM patients GROUP BY general_practitioner_id))"
+            "WITH PatientCounts AS ("
+                    + "  SELECT general_practitioner_id, COUNT(*) AS patient_count "
+                    + "  FROM patients "
+                    + "  GROUP BY general_practitioner_id"
+                    + ")"
+                    + "SELECT * FROM general_practitioners gp "
+                    + "WHERE gp.general_practitioner_id IN ("
+                    + "  SELECT general_practitioner_id "
+                    + "  FROM PatientCounts "
+                    + "  WHERE patient_count > (SELECT AVG(patient_count) FROM PatientCounts)"
+                    + ")"
     );
+
 
     public final String query;
 
