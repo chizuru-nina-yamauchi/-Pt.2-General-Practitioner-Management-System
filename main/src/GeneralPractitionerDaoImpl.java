@@ -3,6 +3,7 @@ package src;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -173,16 +174,47 @@ public class GeneralPractitionerDaoImpl implements GeneralPractitionerDao{
 
     @Override
     public List<GeneralPractitioner> getGeneralPractitionerWithPatientOlderThanAge(int age){
-        return null;
+        List<GeneralPractitioner> generalPractitioners = new ArrayList<>();
+        try(
+                Connection connection = ConnectionFactory.createConnection();
+                PreparedStatement ps = connection.prepareStatement(SqlQuery.GET_GENERAL_PRACTITIONERS_WITH_PATIENT_OLDER_THAN_AGE.query)
+                ) {
+            ps.setInt(1, age);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                generalPractitioners.add((new GeneralPractitioner(rs.getInt("general_practitioner_id"), rs.getString("name"), rs.getInt("age"), rs.getString("city"))));
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        // return the list of generalPractitioners and if there are no general practitioners, return to the empty list
+        return generalPractitioners;
     }
 
     @Override
     public List<GeneralPractitioner> getGeneralPractitionerWithPatientSpecifiedCondition(String condition){
-        return null;
+        List<GeneralPractitioner> generalPractitioners = new ArrayList<>();
+        try(
+                Connection connection = ConnectionFactory.createConnection();
+                PreparedStatement ps = connection.prepareStatement(SqlQuery.GET_GENERAL_PRACTITIONER_WITH_PATIENTS_SPECIFIED_CONDITIONS.query)
+                ){
+            ps.setString(1, condition);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                generalPractitioners.add((new GeneralPractitioner(rs.getInt("general_practitioner_id"), rs.getString("name"), rs.getInt("age"), rs.getString("city")));
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        // return the list of generalPractitioners and if there are no general practitioners, return to the empty list
+        return generalPractitioners;
     }
 
     @Override
     public List<GeneralPractitioner> getGeneralPractitionerWithMorePatientsThanAverage(){
+
+
+
         return null;
     }
 
