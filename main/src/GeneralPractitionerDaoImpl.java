@@ -201,7 +201,7 @@ public class GeneralPractitionerDaoImpl implements GeneralPractitionerDao{
             ps.setString(1, condition);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                generalPractitioners.add((new GeneralPractitioner(rs.getInt("general_practitioner_id"), rs.getString("name"), rs.getInt("age"), rs.getString("city")));
+                generalPractitioners.add((new GeneralPractitioner(rs.getInt("general_practitioner_id"), rs.getString("name"), rs.getInt("age"), rs.getString("city"))));
             }
         }catch (Exception e) {
             e.printStackTrace();
@@ -212,10 +212,19 @@ public class GeneralPractitionerDaoImpl implements GeneralPractitionerDao{
 
     @Override
     public List<GeneralPractitioner> getGeneralPractitionerWithMorePatientsThanAverage(){
-
-
-
-        return null;
+        List<GeneralPractitioner> generalPractitioners = new ArrayList<>();
+        try(
+                Connection connection = ConnectionFactory.createConnection();
+                PreparedStatement ps = connection.prepareStatement(SqlQuery.GET_GENERAL_PRACTITIONER_WITH_MORE_PATIENTS_THAN_AVERAGE.query)
+                ){
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                generalPractitioners.add((new GeneralPractitioner(rs.getInt("general_practitioner_id"), rs.getString("name"), rs.getInt("age"), rs.getString("city"))));
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return generalPractitioners;
     }
 
 }
